@@ -1,0 +1,137 @@
+#  UNDER CONSTRUCTION !
+
+
+#  Differential Exon Usage
+
+---------------------------------
+RNA-seq is a powerful technology to measure differential expression at the exon
+level in eukaryotes across splice variant isoforms.
+
+
+DEXSeq<sup>1</sup> is a set of python scripts and an Bioconductor R package developed by the
+same authors as the Bioconductor R package for differential gene expression -  namely DESeq2<sup>2</sup>.
+
+
+However, this method goes beyond just detecting splice variants, as the method looks
+at differential exon usage (DEU), carried out through the detection of alternative transcription
+start sites and polyadenylation sites that can cause differential exon usage at the 5'
+and 3' ends of transcripts.
+
+#  DEXSeq - Reading the data in to R
+
+Please refer to the DEXseq manual hosted along at the Bioconductor website along with this tutorial:
+http://www.bioconductor.org/packages/release/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.pdf
+
+After preparation of the annotated genome reference and quantification step counting reads
+to exons, using the external DEXSeq python scripts (refer to earlier section on quantification),
+the rest of the analysis is carried out in R.
+
+If you have not already done so you will need to install the DEXSeq package from Bioconductor.
+
+download in R - running the command.
+
+> source("http://bioconductor.org/biocLite.R")
+> biocLite("DEXSeq")
+
+Load DEXSeq library
+
+> library(DEXSeq)
+
+and associated libraries again these can be installed from Bioconductor as described fro DEXseq.
+
+>library(GenomicRanges)
+>library(GenomicFeatures)
+>library(GenomicAlignments)
+
+The next step involves reading in the exon read counts files produced by the
+DEXSeq python scripts into an R dataframe.  An example is shown below with parameters
+dependent on whether the RNA-seq data was single-ended or paired-end.
+
+>sampleTable = data.frame(row.names = c("/home/Sample10.counts","/home/Sample11.counts",
+>"/home/Sample12.counts" ,"/home/Sample17.counts",
+>"/home/Sample18.counts", "/home/Sample19.counts" ,"/home/Sample1.counts" , "/home/Sample20.counts"),
+>condition=c ("WT","WT","WT","WT", "KO","KO","KO","KO"),
+>                         libType =c("paired-end","paired-end","paired-end","paired-end",
+>                                    "paired-end","paired-end","paired-end","paired-end"))
+
+The example above shows the two conditions to be analysed for DEU - namely wild-type
+(WT) and gene knockout (KO) for paired-end RNA-seq reads that were quantified.
+
+Read in the flattended annotation reference file produced in the previous
+quantification step for counting reads to exons.
+
+>flattenedFile= list.files("/data/genomes/GRCh38_Ensembl_Homo_Sapiens/hs_grch38_dexseq_ref",
+>pattern ="gff$",full.names =TRUE)
+
+
+Type following command to suppress superfluous messages in R being reported by DEXSeq in R.
+
+>suppressPackageStartupMessages(library("DEXSeq"))
+
+#  Creating a DEXSeq Object
+
+Construct the DEXSeq object with the following command.  The function takes 4 arguments.
+First, a vector with names of read counts from the quantification step (refer to earlier section),
+that have been generated with the dexseq_count.py script.
+This will read in the count data in a matrix, which is stored in the DEXSeqDataSet object dxd.
+The second argument is the sample table, with one row for each of the listed in the argument.
+
+
+>dxd = DEXSeqDataSetFromHTSeq(countFiles,sampleData=sampleTable,
+>design = ~ sample + exon +  condition:exon,flattenedfile=flattenedFile )
+
+# Normalization
+Because samples can be sequenced to different depths the samples must be normalized
+through calling the function estimateSizeFactors.
+
+>dxd=estimateSizeFactors(dxd)
+
+# Dispersion Estimation
+
+To be able to distinguish technical and biological variation (noise) from real
+effects on exon usage due to the different conditions for differential exon usage, the
+variability of the data needs to be estimated.  A number of the following functions
+are computer intensive in the R environment.  However, if the analysis is performed
+on multi-core server a number of the more computer intensive DEXSeq functions
+can be run .
+
+
+biocLite("BiocParallel")
+library(BiocParallel)
+BPPARAM=MulticoreParam(workers=20)
+
+
+dxd=estimateDispersions( dxd ,BPPARAM=BPPARAM )
+
+plotDispEsts( dxd )
+plotDispEsts(dxd, ymin,
+             genecol = "black", fitcol = "red", finalcol = "dodgerblue",
+             legend=TRUE, xlab, ylab, log = "xy", cex = 0.45)
+
+
+
+
+#  References
+------------------------------
+1) Simon Anders, Alejandro Reyes, and Wolfgang Huber.  Detecting differential usage of exons from
+RNA-seq data.Genome Research, 22:2008, 2012.doi:10.1101/gr.133744.111
+
+
+2) Anders S and Huber W (2010). “Differential expression analysis for sequence
+count data.”  Genome Biology, 11, pp. R106. http://dx.doi.org/10.1186/gb-2010-11-10-r106,
+  http://genomebiology.com/2010/11/10/R106/.
+
+
+3)  Daehwan  Kim,  Geo  Pertea,  Cole  Trapnell,  Harold  Pimentel,  Ryan  Kelley,
+and  Steven  Salzberg. Tophat2:  accurate  alignment  of  transcriptomes  in  the
+presence  of  insertions,  deletions  and  gene fusions.Genome Biology, 14(4):R36,
+  2013. URL:http://genomebiology.com/2013/14/4/R36,doi:10.1186/gb-2013-14-4-r36
+
+
+4) STAR is an ultrafast universal RNA-seq aligner.  A. Dobin et al, Bioinformatics
+  2012; doi: 10.1093/bioinformatics/bts635
+
+
+5) Li H.*, Handsaker B.*, Wysoker A., Fennell T., Ruan J., Homer N., Marth G.,
+Abecasis G., Durbin R. and 1000 Genome Project Data Processing Subgroup (2009)
+The Sequence alignment/map (SAM) format and SAMtools. Bioinformatics, 25, 2078-9. [PMID: 19505943]
