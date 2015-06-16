@@ -15,22 +15,69 @@ It should be noted that despite the feasibility of this analysis approach with c
 
 ![Figure 2][fig2]
 
-**Figure2** - distribution of human exon sizes from GRCh38 (Ensembl release 79).
+**Figure 2** - distribution of human exon sizes from GRCh38 (Ensembl release 79).
 
 ### Available Tools
 
-#### Cufflinks
-[Link to paper][cufflinks]
-#### RSEM
-[Link to paper][rsem]
-#### eXpress
-[Link to paper][express]
-#### Sailfish
-[Link to paper][sailfish]
-#### Salmon
-[Link to paper][salmon]
-#### Kallisto
-[Link to paper][kallisto]
+### Cufflinks
+
+Cufflinks is the sample quantification of the Tuxedo pipeline and has been in use since September 2009. The tools reads alignments (bam), quantifies and assembles transcripts. It's most notable for its _novel discovery_ functionality. Cufflink's novel transcript assembly approach is known as a [RABT - _reference annotation based transcript assembly_][rabt_assembly], which assembles transcripts based on read alignment.
+___
+Current Version 2.2.1  
+[Link to Cufflinks Website][cufflinks_site]  
+[Link to cufflinks paper][cufflinks]
+___
+
+
+### RSEM
+
+RSEM is a versatile software package build in C++, Perl, and R. It covers quantification, simulation, differential expression (using [EBSeq][ebseq]), and data visualisation. RSEM quantification is achieved through a _de novo_ approach, which utilises ambiguously-mapped reads. RSEM quantification does not rely on the existence of a reference genome.
+___
+Current Version 1.2.21
+[Link to RSEM Website][rsem_site]  
+[Link to RSEM paper][rsem]
+___
+
+
+### eXpress
+
+eXpress was developed at Berkely and offers a streaming solution, with a low computation and memory footprint, to quantify the transcriptome. eXpress is a multi-platform tool written in C++, and like RSEM, doesn't require a reference genome. eXpress can stream alignments from popular aligners, both reference based and _de novo_.
+___
+Current Version 1.5.1  
+[Link to eXpress Website][express_site]  
+[Link to eXpress paper][express]
+___
+
+
+### Sailfish
+
+Sailfish was the pioneer of the K-mer based quantification approaches, which are at the forefront of RNA-seq quantification currently. These approaches don't require alignment, and achieve transcript level quantification from raw reads. Sailfish development has been discontinued as more development is invested in its successor, Salmon.
+___
+Current Version beta 0.6.3
+[Link to Sailfish Website][sailfish_site]  
+[Link to Sailfish paper][sailfish]
+___
+
+
+### Salmon
+
+Salmon is the successor to Sailfish, developed by Rob Patro, a non-deterministic implementation to the K-mer based, alignment free transcript quantification concept. Salmon, along with Kallisto, are being developed at a very fast rate, with new releases on an almost weekly basis. While Salmon is alignment free in the traditional sense, it's algorithm makes use of _lightweight alignments_, which are very fast to compute.
+___
+Current Version beta 0.4.2
+[Link to Salmon Website][salmon_site]  
+[Link to Salmon paper][salmon]
+___
+
+
+### Kallisto
+
+Kallisto is another implementation of the popular K-mer based, alignment free transcript quantification concept. Kallisto is a deterministic algorithm that is in rapid development from Lior Prachter's lab. Kallisto works on the idea of _pseudoalignments_, similar to the _lightweight alignments_ seen in Salmon. The software can accurately quantify 30 Million human reads in around 3 minutes on a desktop.
+___
+Current Version beta 0.42.1
+[Link to Kallisto Website][kallisto_site]  
+[Link to Kallisto paper][kallisto]
+___
+
 
 ## Recommended tool
 
@@ -56,3 +103,11 @@ Kallisto has - bootstrapping, deterministic
  [exon]: ../exon-level
  [fig1]: figure-1.png
  [fig2]: figure-2.png
+ [rabt_assembly]:http://bioinformatics.oxfordjournals.org/content/27/17/2325.full
+ [cufflinks_site]:http://cole-trapnell-lab.github.io/cufflinks/
+ [rsem_site]:http://deweylab.biostat.wisc.edu/rsem/
+ [ebseq]:http://bioinformatics.oxfordjournals.org/content/29/8/1035.full
+ [express_site]:http://bio.math.berkeley.edu/eXpress/
+ [sailfish_site]:http://www.cs.cmu.edu/~ckingsf/software/sailfish/index.html
+ [salmon_site]:https://github.com/COMBINE-lab/salmon
+ [kallisto_site]:https://github.com/pachterlab/kallisto
