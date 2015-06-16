@@ -112,7 +112,7 @@ Kallisto has - bootstrapping, deterministic
 
 #### An aside
 
-Salmon no longer produces FPKMs in its table of results. Instead Transcripts Per Million (TPM) is favoured as a 'normalised' measure of transcript expression. If you want to know more about the differences between FPKM and TPM, and why the latter is preferred, see this post by Harold Pimentel: [A note on TPM vs FPKM][tpm]
+Salmon no longer produces FPKMs in its table of results. This is in large part due to the inconsistencies of [RF]PKM among samples (see [Wagner *et al*][wagner] for more details). Instead Transcripts Per Million (TPM) is favoured as a 'normalised' measure of transcript expression. If you want to know more about the differences between FPKM and TPM, and why the latter is preferred, see this post by Harold Pimentel: [What the FPKM?][tpm]
 
 #### A Further aside
 
@@ -167,6 +167,8 @@ salmon quant \
 			      -o ~/Salmon_Output
 ```
 
+Note, we're using `bash` process substitution here to deal with gzipped FASTQ files - gunzipped files can be read by Salmon natively.
+
 ### Kallisto
 As with Salmon, Kallisto also requires an one off index creating, prior to quantification.
 
@@ -219,3 +221,4 @@ kallisto quant \
  [salmon_site]:https://github.com/COMBINE-lab/salmon
  [kallisto_site]:https://github.com/pachterlab/kallisto
  [simon-blog]:http://sjcockell.me/2015/05/18/alignment-free-transcriptome-quantification/
+ [wagner]:http://lynchlab.uchicago.edu/publications/Wagner,%20Kin,%20and%20Lynch%20(2012).pdf
