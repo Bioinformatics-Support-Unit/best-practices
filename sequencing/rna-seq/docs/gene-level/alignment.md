@@ -2,19 +2,15 @@
 
 After read quality control, the next step is the map these reads to a reference genome. In order to assess the number of reads mapping to a particular gene, it is necessary to find the location of each read in a reference genome.
 
--splice junction aln VS non-splice awareness alignment
+There are many tools available for aligning high throughput sequencing data (DNASeq and RNASeq). Some tools are capable of aligning reads across splice junctions ("splice aware") for example [STAR](https://github.com/alexdobin/STAR), [TopHat](https://ccb.jhu.edu/software/tophat/index.shtml), and [HISAT](http://ccb.jhu.edu/software/hisat/manual.shtml). Some aligners such as [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) and [BWA](http://bio-bwa.sourceforge.net/) are not designed to map reads that span slice junctions.
 
-There are many tools available for aligning high throughput sequencing data (DNASeq and RNASeq). Some tools are capable of aligning reads across splice junctions ("splice aware") for example TopHat, STAR amd HISAT. Some tools such as Bowtie and BWA are not designed to map reads that span slice junctions.
+The choice of tool for aligning RNASeq data is therefore dependent upon the organism in question. For example if it is a prokaryotic transcriptome you don't have to worry about splice junctions, but on the other hand if the transcriptomic data is from eukaryotes e.g. human, then the aligner will need to be able to handle splice junctions.
 
-The choice of tool for aligning RNASeq data is therefore dependent upon the organism in question.
-
- being sequenced. For example if it is a prokaryotic species you don't have to worry about splice junctions, but on the other hand if it is from eukaryotes eg. human, then the aligner will need to be able to handle splice junctions.
-
+<!---
 Give examples: Not suitable for high throughput sequencing data - BLAST
+-->
 
-In this document, we will focus on aligning RNAseq data from a human sample. There are number of RNAseq aligners avialable e.g. Bt, BWa, tophat, hisat etc. Here, we will describe how to use Star (ref). STAR 2-pass mapping procedure has been recommended as the most accurate tool for RNAseq [ref].
-
-In brief, in the STAR 2-pass approach, splice junctions detected in a first alignment run are used to guide the final alignment.
+In this document, we will use [STAR](https://github.com/alexdobin/STAR) to align a paired-end RNAseq data. We will describe how to run *STAR 2-pass* mapping procedure which has been shown by [Pär G Engström et al.](http://www.nature.com/nmeth/journal/v10/n12/full/nmeth.2722.html) as one of the most accurate tool for mapping transcript reads to a genome. In brief, the STAR 2-pass approach uses splice junctions detected in a first alignment run to guide the final alignment.
 
 ### Procedure
 
