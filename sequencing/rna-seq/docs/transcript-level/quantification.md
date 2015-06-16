@@ -120,9 +120,9 @@ The way Salmon and Kallisto calculate TPM varies slightly - Salmon uses the tran
 
 > is usually computed as:
 >
-> $$\widetilde{l}_i = l_i - \mu_{FLD} + 1$$
+> ![equation](http://www.sciweavers.org/tex2img.php?eq=%5Cwidetilde%7Bl%7Di%20%3D%20l_i%20-%20%5Cmu%7BFLD%7D%20%2B%201&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
 >
->Where $$\mu_{FLD}$$ is the mean of the fragment length distribution which was learned from the aligned read.
+>Where ![equation](http://www.sciweavers.org/tex2img.php?eq=%5Cmu%7BFLD%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) is the mean of the fragment length distribution which was learned from the aligned read.
 
 ## How to use
 
