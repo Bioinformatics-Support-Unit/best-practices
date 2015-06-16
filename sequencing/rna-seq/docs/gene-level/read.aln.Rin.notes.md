@@ -1,23 +1,28 @@
-Introduction
-============
+# Introduction
 
-After read quality control, the next step is the map these reads to a reference genome.
+After read quality control, the next step is the map these reads to a reference genome. In order to assess the number of reads mapping to a particular gene, it is necessary to find the location of each read in a reference genome.
 
 -splice junction aln VS non-splice awareness alignment
 
-The choice of tools depends on the organnism being seqeunced i.e. if it is a prokaryotic species you don't have to worry about splice junctions, but on the other hand if it is from eukaryotes eg. human, then the aligner will need to be able to handle splice junctions.
+There are many tools available for aligning high throughput sequencing data (DNASeq and RNASeq). Some tools are capable of aligning reads across splice junctions ("splice aware") for example TopHat, STAR amd HISAT. Some tools such as Bowtie and BWA are not designed to map reads that span slice junctions.
+
+The choice of tool for aligning RNASeq data is therefore dependent upon the organism in question.
+
+ being sequenced. For example if it is a prokaryotic species you don't have to worry about splice junctions, but on the other hand if it is from eukaryotes eg. human, then the aligner will need to be able to handle splice junctions.
+
+Give examples: Not suitable for high throughput sequencing data - BLAST
 
 In this document, we will focus on aligning RNAseq data from a human sample. There are number of RNAseq aligners avialable e.g. Bt, BWa, tophat, hisat etc. Here, we will describe how to use Star (ref). STAR 2-pass mapping procedure has been recommended as the most accurate tool for RNAseq [ref].
 
 In brief, in the STAR 2-pass approach, splice junctions detected in a first alignment run are used to guide the final alignment.
 
-procedure
----------
-1) Download and install STAR (link)
+### Procedure
 
-STAR manual includes installation instruction.
+1. Download and install STAR (link)
 
-2) Generate STAR genome index of the reference genome
+  STAR manual includes installation instruction.
+
+2. Generate STAR genome index of the reference genome
 
 Note that STAR provide a pre-compiled genome index for human and mouse genomes which can be downloaded from:
 
@@ -29,33 +34,43 @@ If you need to build a STAR genome from scratch, what you need to do is:
   - Obtain a reference genome in *fasta* format.
   - Build a STAR genome index using
 
-  ```STAR --runMode genomeGenerate --genomeDir outputDir --genomeFastaFiles reference.fa```
+  ```
+  STAR --runMode genomeGenerate --genomeDir outputDir --genomeFastaFiles reference.fa
+  ```
 
-  (see STAR manual for more information)
+(see STAR manual for more information)
 
 To run STAR 2-pass alignment steps:
-  1. First round: align reads to the reference genome
-  ```STAR --genomeDir genomeDir --readFilesIn read1.fastq.gz read2.fastq.gz --readFilesCommand zcat --outStd SAM```
 
-Note that this step will output a SAM file, which can then be compressed into BAM format using ```samtools```
+1. First round: align reads to the reference genome
 
+  ```
+  STAR --genomeDir genomeDir --readFilesIn mate_1.fastq.gz mate_2.fastq.gz
+   --readFilesCommand zcat
+  ```
 
-  2. Use the spliced junction info (file named with an extension *.SJ.out.tab*) file generated from Step 1 to create a new index
+  Note that this step will produce a SAM file *Aligned.out.sam*, which can then be compressed to BAM format using `samtools`
 
-  ```STAR --runMode genomeGenerate --genomeDir genomeDir_SJ --genomeFastaFiles ref.fa --sjdbFileChrStartEnd SJ.out.tab --sjdbOverhang 75```
+2. Use the spliced junction info (file named with an extension *.SJ.out.tab*) file generated from Step 1 to create a new index. Note that --sjdboverhang is the length of the "overhang" on each side of a splice junctions.
 
-  3. Second round alignment: align reads to the reference index generated in Step 2
+  ```
+  STAR --runMode genomeGenerate --genomeDir genomeDir_SJ
+  --genomeFastaFiles ref.fa --sjdbFileChrStartEnd SJ.out.tab --sjdbOverhang 75
+  ```
 
-  ```STAR --genomeDir genomeDir_SJ --readFilesIn read1.fastq.gz read2.fastq.gz --readFilesCommand zcat --outStd SAM```
+3. Second round alignment: align reads to the reference index generated in Step 2
 
+  ```
+  STAR --genomeDir genomeDir_SJ --readFilesIn mate_1.fastq.gz mate_2.fastq.gz
+   --readFilesCommand zcat --outStd SAM
+  ```
 
-Checking alignment quality
---------------------------
+### Checking alignment quality
 
-The mapping quality of the data can be quickly checked by looking the final mapping statistics information provided by STAR in Log.final.out – 
+The mapping quality of the data can be quickly checked by looking at the final mapping statistics information provided by STAR in the file *Log.final.out*. Example output is shown below:
 
-
-```                                   Finished on |       Jun 15 21:14:53
+```
+                                    Finished on |       Jun 15 21:14:53
        Mapping speed, Million of reads per hour |       42.42
 
                           Number of input reads |       42340824
@@ -84,4 +99,4 @@ The mapping quality of the data can be quickly checked by looking the final mapp
        % of reads unmapped: too many mismatches |       0.00%
                  % of reads unmapped: too short |       3.06%
                      % of reads unmapped: other |       0.06%
-`````
+```
