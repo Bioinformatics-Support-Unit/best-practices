@@ -3,6 +3,15 @@
 ## Table of Contents
 
 * [Introduction](#introduction)
+* [Available Tools](#available-tools)
+  * [Cufflinks](#cufflinks)
+  * [RSEM](#rsem)
+  * [eXpress](#express)
+  * [Sailfish](#sailfish)
+  * [Salmon](#salmon)
+  * [Kallisto](#kallisto)
+* [Recommended Tool](#recommended-tool)
+* [How To Use](#how-to-use)
 
 ## Introduction
 
@@ -86,13 +95,32 @@ ___
 
 ## Recommended tool
 
-Salmon/Kallisto
+At the time of writing, we are not in a position to recommned the "one best tool" for transcript-level quantification for RNA-Seq analysis. However, some clear patterns in best practice for this class of analysis are becoming clear.
+
+Older tools, which require alignment to a genome or transcriptome have some significant limitations which inhibit their day-to-day use. Because of the alignment requirement, they are significantly slower than more modern, "alignment-free" approaches. While speed is not the only metric that counts (and often not a good metric), it does lend these tools a significant overhead which can be avoided. The [Kallisto preprint][kallisto] points to some accuracy limitations with both Cufflinks and Sailfish - the former possibly due to some limitation of the EM algorithm in dealing with multi-mapping reads, the latter likely due to information loss in K-mer generation from reads. The suggestion is that the lightweight alignment approach, taken by both Kallisto and Salmon offers both the speed advantage of the alignment-free approach pioneered by Sailfish, but with none of the accuracy loss implicit in the K-mer shredding approach.
+
+In trying to determine whether Salmon or Kallisto is more accurate, we've simulated RNA-Seq reads with a known count distribution, and benchmarked both tools against this ground truth. The results are detailed in [this blog post][simon-blog], and are not entirely conclusive. The initial pass suggested that Kallisto is the more accurate tool, but in response to the commentary posted on the article, some modifications to the handling of Salmon results gave rise to a comparison that is probably 'too close to call'. Both tools are in rapid, active development, and this comparison work will be continued.
+
+Each tool has some features which may be considered advantageous, and at this point, which tool to use falls to a personal preference.
 
 Salmon has - gene level quantification, bias correction
 
 Kallisto has - bootstrapping, deterministic
 
-[A note on TPM vs FPKM][tpm]
+
+#### An aside
+
+Salmon no longer produces FPKMs in its table of results. Instead Transcripts Per Million (TPM) is favoured as a 'normalised' measure of transcript expression. If you want to know more about the differences between FPKM and TPM, and why the latter is preferred, see this post by Harold Pimentel: [A note on TPM vs FPKM][tpm]
+
+#### A Further aside
+
+The way Salmon and Kallisto calculate TPM varies slightly - Salmon uses the transcript length as determined by the reference database, whereas Kallisto uses the 'effective length' of the transcript, which as the link above details:
+
+> is usually computed as:
+>
+> \widetilde{l}_i = l_i - \mu_{FLD} + 1
+>
+>Where \mu_{FLD} is the mean of the fragment length distribution which was learned from the aligned read.
 
 ## How to use
 
@@ -116,3 +144,4 @@ Kallisto has - bootstrapping, deterministic
  [sailfish_site]:http://www.cs.cmu.edu/~ckingsf/software/sailfish/index.html
  [salmon_site]:https://github.com/COMBINE-lab/salmon
  [kallisto_site]:https://github.com/pachterlab/kallisto
+ [simon-blog]:http://sjcockell.me/2015/05/18/alignment-free-transcriptome-quantification/
