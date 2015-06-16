@@ -95,6 +95,8 @@ ___
 
 ## Recommended tool
 
+**Salmon or Kallisto**
+
 At the time of writing, we are not in a position to recommned the "one best tool" for transcript-level quantification for RNA-Seq analysis. However, some clear patterns in best practice for this class of analysis are becoming clear.
 
 Older tools, which require alignment to a genome or transcriptome have some significant limitations which inhibit their day-to-day use. Because of the alignment requirement, they are significantly slower than more modern, "alignment-free" approaches. While speed is not the only metric that counts (and often not a good metric), it does lend these tools a significant overhead which can be avoided. The [Kallisto preprint][kallisto] points to some accuracy limitations with both Cufflinks and Sailfish - the former possibly due to some limitation of the EM algorithm in dealing with multi-mapping reads, the latter likely due to information loss in K-mer generation from reads. The suggestion is that the lightweight alignment approach, taken by both Kallisto and Salmon offers both the speed advantage of the alignment-free approach pioneered by Sailfish, but with none of the accuracy loss implicit in the K-mer shredding approach.
@@ -118,12 +120,84 @@ The way Salmon and Kallisto calculate TPM varies slightly - Salmon uses the tran
 
 > is usually computed as:
 >
-> \widetilde{l}_i = l_i - \mu_{FLD} + 1
+> ![equation](eq-1.png)
 >
->Where \mu_{FLD} is the mean of the fragment length distribution which was learned from the aligned read.
+>Where ![equation](eq-2.png) is the mean of the fragment length distribution which was learned from the aligned read.
 
 ## How to use
 
+### Salmon
+Salmon requires you to build an index of the transcriptome sequence, for your organism of choice. Building the Salmon Index is a one off command, subsequent to that, it can be referenced in the quantification step.
+
+#### Build an Index
+| Switch | Function                   |
+|:------:|:-------------------------- |
+| -t     |Transcripts Fasta File|
+| -i     |Output Directory|
+
+```bash
+#!/bin/bash
+salmon index \
+            -t /data/hg19_transcripts.fa \
+            -i /data/hg19_Salmon_idx
+```
+
+#### Quantify
+This example command would quantify at the gene and transcript level.
+
+| Switch | Function                   |
+|:------:|:-------------------------- |
+| -g     |Gene ID to Transcript ID map|
+| -p     |Number of threads|
+| -i     |The Salmon Index|
+| -l     |Library Type (Inward, unstranded in this case)|
+| -1     |Forward reads|
+| -2     |Reverse Reads|
+| -o     | Output Directory|
+
+```bash
+#!/bin/bash
+salmon quant \
+			      -g /data/hg19_gene_map.txt \
+			      -p 2 \
+			      -i /data/hg19_Salmon_idx \
+			      -l 'IU' \
+			      -1 <(gunzip -c ~/raw_data/sample_1_Forward.fq.gz) \
+			      -2 <(gunzip -c ~/raw_data/sample_1_Reverse.fq.gz) \
+			      -o ~/Salmon_Output
+```
+
+### Kallisto
+As with Salmon, Kallisto also requires an one off index creating, prior to quantification.
+
+#### Build an Index
+| Switch | Function                   |
+|:------:|:-------------------------- |
+| -i     |Transcripts Fasta File|
+
+```bash
+#!/bin/bash
+kallisto index \
+              -i /data/hg19_kallisto_idx \
+              /data/hg19_transcripts.fa
+```
+
+#### Quantify
+This example command would quantify at the transcript level
+
+| Switch | Function                   |
+|:------:|:-------------------------- |
+| -i     |Kallisto Index|
+| -o     |Output Directory|
+
+```bash
+#!/bin/bash
+kallisto quant \
+              -i /data/hg19_kallisto_idx \
+              -o ~/Kallisto_output \
+              ~/raw_data/sample_1_Forward.fq \
+              ~/raw_data/sample_1_Reverse.fq
+```
 
 
  [tpm]: https://haroldpimentel.wordpress.com/2014/05/08/what-the-fpkm-a-review-rna-seq-expression-units/
