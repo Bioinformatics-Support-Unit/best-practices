@@ -28,6 +28,8 @@ It should be noted that despite the feasibility of this analysis approach with c
 \* Fragment size is usually 250 bases, the average human exon is 248.08 bases, the median is 129 bases - determined from Ensembl release 79 genes, see figure 2.
 
 ![Figure 2][fig2]
+<!--<div style="text-align:center"><img src ="figure-2.png" /></div>-->
+
 
 **Figure 2** - distribution of human exon sizes from GRCh38 (Ensembl release 79).
 
