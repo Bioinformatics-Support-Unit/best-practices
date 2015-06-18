@@ -25,7 +25,7 @@ The complexity of the information available in even a small RNA-Seq dataset allo
 
 It should be noted that despite the feasibility of this analysis approach with current RNA-Seq data, transcript-level quantification remains an extremely challenging problem, and one which many tools have attempted to address. It is only with vey recent developments that it seems like we are getting close to an optimal solution for this problem.
 
-\* Fragment size is usually 250 bases, the average human exon is 248.08 bases, the median is 129 bases - determined from Ensembl release 79 genes, see figure 2.
+\* Fragment size is usually ~250 bases, the average human exon is 248.08 bases, the median is 129 bases - determined from Ensembl release 79 genes, see figure 2.
 
 ![Figure 2][fig2]
 <!--<div style="text-align:center"><img src ="figure-2.png" /></div>-->
