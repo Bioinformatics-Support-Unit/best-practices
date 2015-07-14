@@ -21,7 +21,7 @@ Much current RNA-Seq analysis essentially attempts to replicate the function of
 ![Figure 1][fig1]
 **Figure 1** - a demonstration of 'isoform switching' from an RNA-Seq experiment. The gene (RERE) is not differentially expressed, but is clearly composed of two major isoforms which are.
 
-The complexity of the information available in even a small RNA-Seq dataset allows us to go far beyond this standard analysis. Examining individual exons for expression and dysregulation is one way of working with this complexity - and there are [recommended tools and workflows for this type of analysis][exon] on this site. However, since most RNA-Seq experiments are designed to have fragments larger than the average exon,* we have the flexibility to do more than simply quantify exons. It is also possible to determine how the exons are joined to form cogent transcripts, and these transcripts can then be assessed for *their* differential expression. This is a biologically more meaningful analysis scenario.
+The complexity of the information available in even a small RNA-Seq dataset allows us to go far beyond this standard analysis. Examining individual exons for expression and dysregulation is one way of working with this complexity - and there are [recommended tools and workflows for this type of analysis][exon] on this site. However, since most RNA-Seq experiments are designed to have fragments larger than the average exon,\* we have the flexibility to do more than simply quantify exons. It is also possible to determine how the exons are joined to form cogent transcripts, and these transcripts can then be assessed for *their* differential expression. This is a more biologically meaningful analysis scenario.
 
 It should be noted that despite the feasibility of this analysis approach with current RNA-Seq data, transcript-level quantification remains an extremely challenging problem, and one which many tools have attempted to address. It is only with vey recent developments that it seems like we are getting close to an optimal solution for this problem.
 
@@ -37,7 +37,7 @@ It should be noted that despite the feasibility of this analysis approach with c
 
 ### Cufflinks
 
-Cufflinks is the sample quantification of the Tuxedo pipeline and has been in use since September 2009. The tools reads alignments (bam), quantifies and assembles transcripts. It's most notable for its _novel discovery_ functionality. Cufflink's novel transcript assembly approach is known as a [RABT - _reference annotation based transcript assembly_][rabt_assembly], which assembles transcripts based on read alignment.
+Cufflinks is the sample quantification of the Tuxedo pipeline and has been in use since September 2009. The tools reads alignments (bam), quantifies and assembles transcripts. It's most notable for its _novel discovery_ functionality. Cufflinks' novel transcript assembly approach is known as a [RABT - _reference annotation based transcript assembly_][rabt_assembly], which assembles transcripts based on read alignment.
 ___
 Current Version 2.2.1  
 [Link to Cufflinks Website][cufflinks_site]  
@@ -47,7 +47,7 @@ ___
 
 ### RSEM
 
-RSEM is a versatile software package build in C++, Perl, and R. It covers quantification, simulation, differential expression (using [EBSeq][ebseq]), and data visualisation. RSEM quantification is achieved through a _de novo_ approach, which utilises ambiguously-mapped reads. RSEM quantification does not rely on the existence of a reference genome.
+RSEM is a versatile software package built in C++, Perl, and R. It covers quantification, simulation, differential expression (using [EBSeq][ebseq]), and data visualisation. RSEM quantification is achieved through a _de novo_ approach, which utilises ambiguously-mapped reads. RSEM quantification does not rely on the existence of a reference genome.
 ___
 Current Version 1.2.21  
 [Link to RSEM Website][rsem_site]  
@@ -57,7 +57,7 @@ ___
 
 ### eXpress
 
-eXpress was developed at Berkely and offers a streaming solution, with a low computation and memory footprint, to quantify the transcriptome. eXpress is a multi-platform tool written in C++, and like RSEM, doesn't require a reference genome. eXpress can stream alignments from popular aligners, both reference based and _de novo_.
+eXpress was developed at Berkeley and offers a streaming solution, with a low computation and memory footprint, to quantify the transcriptome. eXpress is a multi-platform tool written in C++, and like RSEM, doesn't require a reference genome. eXpress can stream alignments from popular aligners, both reference based and _de novo_.
 ___
 Current Version 1.5.1  
 [Link to eXpress Website][express_site]  
@@ -89,7 +89,7 @@ ___
 
 Kallisto is another implementation of the popular K-mer based, alignment free transcript quantification concept. Kallisto is a deterministic algorithm that is in rapid development from Lior Prachter's lab. Kallisto works on the idea of _pseudoalignments_, similar to the _lightweight alignments_ seen in Salmon. The software can accurately quantify 30 Million human reads in around 3 minutes on a desktop.
 ___
-Current Version beta 0.42.1  
+Current Version beta 0.42.2.1  
 [Link to Kallisto Website][kallisto_site]  
 [Link to Kallisto paper][kallisto]
 ___
@@ -99,7 +99,7 @@ ___
 
 **Salmon or Kallisto**
 
-At the time of writing, we are not in a position to recommned the "one best tool" for transcript-level quantification for RNA-Seq analysis. However, some clear patterns in best practice for this class of analysis are becoming clear.
+At the time of writing, we are not in a position to recommend the 'one best tool' for transcript-level quantification for RNA-Seq analysis. However, some clear patterns in best practice for this class of analysis are becoming clear.
 
 Older tools, which require alignment to a genome or transcriptome have some significant limitations which inhibit their day-to-day use. Because of the alignment requirement, they are significantly slower than more modern, "alignment-free" approaches. While speed is not the only metric that counts (and often not a good metric), it does lend these tools a significant overhead which can be avoided. The [Kallisto preprint][kallisto] points to some accuracy limitations with both Cufflinks and Sailfish - the former possibly due to some limitation of the EM algorithm in dealing with multi-mapping reads, the latter likely due to information loss in K-mer generation from reads. The suggestion is that the lightweight alignment approach, taken by both Kallisto and Salmon offers both the speed advantage of the alignment-free approach pioneered by Sailfish, but with none of the accuracy loss implicit in the K-mer shredding approach.
 
@@ -135,7 +135,7 @@ Salmon requires you to build an index of the transcriptome sequence, for your or
 | Switch | Function                   |
 |:------:|:-------------------------- |
 | -t     |Transcripts Fasta File|
-| -i     |Output Directory|
+| -i     |Output Directory (index goes here)|
 
 ```bash
 #!/bin/bash
@@ -177,7 +177,7 @@ As with Salmon, Kallisto also requires an one off index creating, prior to quant
 #### Build an Index
 | Switch | Function                   |
 |:------:|:-------------------------- |
-| -i     |Transcripts Fasta File|
+| -i     |Output Directory (index goes here)|
 
 ```bash
 #!/bin/bash
@@ -209,7 +209,7 @@ kallisto quant \
  [rsem]: http://www.biomedcentral.com/1471-2105/12/323/abstract
  [express]: http://www.nature.com/nmeth/journal/v10/n1/full/nmeth.2251.html
  [sailfish]: http://www.nature.com/nbt/journal/v32/n5/full/nbt.2862.html
- [salmon]: http://thereisntone.com/
+ [salmon]: http://biorxiv.org/content/early/2015/06/27/021592
  [kallisto]: http://arxiv.org/abs/1505.02710
  [exon]: ../exon-level
  [fig1]: figure-1.png
